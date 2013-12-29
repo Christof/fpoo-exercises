@@ -21,3 +21,15 @@
   (second (rest list)))
 
 (third3 [1 2 3 4])
+
+; Exercise 3
+(defn add-squares [& list]
+  (apply + (map * list list)))
+
+(add-squares 1 2 5)
+
+; Exercise 4
+(defn fact [n]
+  (apply * (range 1 (inc n))))
+
+(fact 5)
