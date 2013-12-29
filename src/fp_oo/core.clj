@@ -73,3 +73,19 @@
 ; Remove: remove all nil values from a sequence
 (remove nil? '(1 2 nil 3 A B))
 
+; Exercise 6
+(defn prefix-of? [candidate sequence]
+  (= candidate (take (count candidate) sequence)))
+(prefix-of? [1 2] [1 2 3 4])
+(prefix-of? '(2 3) [1 2 3 4])
+(prefix-of? '(1 2) [1 2 3 4])
+
+; Exercise 7
+(defn tails [list]
+  (map #(drop % list) (range (count list))))
+(tails '(1 2 3 4))
+
+; Exercise 8
+(def puzzle (fn [list] (list list)))
+(puzzle '(1 2 3))
+; ((1 2 3) (1 2 3)) => error
