@@ -51,8 +51,7 @@
       (make Point 3 1))
 
 ; Exercise 3: equal-triangles?
-(defn equal-triangles? [t1 t2]
-  (= t1 t2))
+(def equal-triangles? =)
 (equal-triangles? right-triangle right-triangle)
 (equal-triangles? right-triangle equal-right-triangle)
 (equal-triangles? right-triangle different-triangle)
