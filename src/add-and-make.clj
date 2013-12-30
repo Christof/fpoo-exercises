@@ -61,5 +61,13 @@
                   equal-right-triangle
                   different-triangle)
 
+; Exercise 5
+(def valid-triangle?
+  (fn [& points]
+    (and (= 3 (count points))
+         (= (distinct points) points))))
+(valid-triangle? (Point 0 1) (Point 0 2) (Point 1 1))
+(valid-triangle? (Point 0 1) (Point 0 1) (Point 1 1))
+
 
 
