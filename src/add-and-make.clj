@@ -56,4 +56,10 @@
 (equal-triangles? right-triangle equal-right-triangle)
 (equal-triangles? right-triangle different-triangle)
 
+; Exercise 4: equal-triangles? for more than two triangles
+(equal-triangles? right-triangle
+                  equal-right-triangle
+                  different-triangle)
+
+
 
