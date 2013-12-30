@@ -41,3 +41,12 @@
 (defn add2 [point1 point2]
   (shift point1 (x point2) (y point2)))
 (add2 (Point 1 2) (Point 3 4))
+
+; Exercise 2: constructor
+(defn make [type-constructor & arguments]
+  (apply type-constructor arguments))
+(make Point 1 2)
+(make Triangle (make Point 1 2)
+      (make Point 1 3)
+      (make Point 3 1))
+
