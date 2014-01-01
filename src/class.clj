@@ -60,4 +60,7 @@
 })
 (send-to (make Holder "stuff") :held)
 
+;; Exercise 5
+(send-to (make Point 1 2) :some-unknown-message)
+
 
