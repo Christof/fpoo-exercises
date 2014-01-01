@@ -5,7 +5,7 @@
   (eval (:__class_symbol__ instance)))
 
 (defn apply-message-to [class instance message args]
-  (apply (method-from-message class message)instance args))
+  (apply (or (method-from-message class message) message) instance args))
 
 (def make
      (fn [class & args]
@@ -45,6 +45,8 @@
 (prn (send-to a-point :class-name))
 (prn (send-to a-point :class))
 
+;; Exercise 3
+; REPL
 
 ;; For exercise 4
 (def Holder  
@@ -56,4 +58,6 @@
                            (assoc this :held held))
   }
 })
+(send-to (make Holder "stuff") :held)
+
 
