@@ -1,3 +1,7 @@
+(defn apply-message-to [class instance message args]
+  (let [method (message (:__instance_methods__ class))]
+    (apply method instance args)))
+
 (def make
      (fn [class & args]
        (let [seeded {:__class_symbol__ (:__own_symbol__ class)}
@@ -27,6 +31,10 @@
                                 (:y other)))
    }
  })
+
+(def a-point (make Point 1 2))
+(prn (apply-message-to Point a-point :shift [1 3]))
+(prn (send-to a-point :shift 1 3))
 
 
 ;; For exercise 4
