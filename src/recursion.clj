@@ -17,7 +17,7 @@
 (defn rec-function [combiner elements so-far]
   (if (empty? elements)
     so-far
-    (rec-function combiner (rest elements) (combiner so-far (first elements)))))
+    (rec-function combiner (rest elements) (combiner (first elements) so-far))))
 
 ; Exercise 3
 (defn recursive-function [elements so-far]
@@ -26,3 +26,10 @@
 
 ; Exercise 4
 (prn (rec-function * [1 2 3 4] 1))
+
+; Exercise 5
+(defn f [elt so-far]
+  (assoc so-far elt 0))
+(rec-function f [:a :b :c] {})
+
+(rec-function #(assoc %2 %1 (count %2)) [:a :b :c] {})
