@@ -13,10 +13,16 @@
     (factorial2 (dec n) (* so-far n))))
 (prn (factorial2 4 1))
 
-; Exercise 3
-(defn recursive-function [elements so-far]
+; Exercise 4
+(defn rec-function [combiner elements so-far]
   (if (empty? elements)
     so-far
-    (recursive-function (rest elements) (+ so-far (first elements)))))
+    (rec-function combiner (rest elements) (combiner so-far (first elements)))))
+
+; Exercise 3
+(defn recursive-function [elements so-far]
+  (rec-function + elements so-far))
 (prn (recursive-function [1 2 3 4] 0))
 
+; Exercise 4
+(prn (rec-function * [1 2 3 4] 1))
