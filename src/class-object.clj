@@ -172,3 +172,20 @@
   (assoc MetaAnything :__superclass_symbol__ 'Anything))
 (prn (send-to Point :to-string))
 
+; Exercise 3
+(prn (:__class_symbol__ Point))
+(prn (:__class_symbol__ MetaPoint))
+
+(def MetaAnything
+     (assoc MetaAnything :__class_symbol__ 'Anything))
+
+(def MetaPoint
+     (assoc MetaPoint :__class_symbol__ 'Anything))
+
+
+(prn (send-to MetaPoint :class))
+(prn (send-to MetaPoint :to-string))
+
+(try (send-to MetaPoint :new)
+(catch Error e))          ; a method-missing error
+
