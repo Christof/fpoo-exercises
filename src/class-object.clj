@@ -165,3 +165,10 @@
 (send-to something :method-missing :the-name-of-no-method ["arguments"])
 (def point (send-to MissingOverrider :new))
 (send-to point :the-name-of-no-method 1 2)
+
+; Exercise 2
+(prn (send-to Point :to-string))
+(def MetaAnything
+  (assoc MetaAnything :__superclass_symbol__ 'Anything))
+(prn (send-to Point :to-string))
+
