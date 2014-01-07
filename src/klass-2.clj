@@ -99,9 +99,27 @@
           :origin (fn [class] (send-to class :new 0 0))
          })
 
+
 (prn (send-to Point :to-string))
 (prn (send-to Klass :to-string))
 (prn (send-to (send-to Anything :new) :to-string))
 (prn (send-to (send-to Point :new 1 2) :to-string))
+
+(send-to Klass :new
+         'ColorPoint 'Anything
+         {
+          :color "black"
+          })
+
+(def Klass
+  (assoc-in Klass
+            [:__instance_methods__ :ancestors]
+            (fn [class]
+              ;(remove invisible?
+                      (reverse (lineage (:__own_symbol__ class))))))
+(send-to Point :ancestors) ;(Point Anything)
+(send-to ColoredPoint :ancestors) ;(ColoredPoint Point Anything)
+(send-to Klass :ancestors) ;(Klass Anything)
+
 
 
