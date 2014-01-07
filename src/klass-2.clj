@@ -36,6 +36,10 @@
                        (fn [class & args]
                          (let [seeded {:__class_symbol__ (:__own_symbol__ class)}]
                            (apply-message-to class seeded :add-instance-values args)))
+                       :to-string
+                       (fn [this] 
+                         (cl-format nil "class ~A "
+                                    (:__own_symbol__ this)))
                       }))
                             
 (install (basic-class 'MetaKlass,
@@ -94,4 +98,10 @@
          {
           :origin (fn [class] (send-to class :new 0 0))
          })
+
+(prn (send-to Point :to-string))
+(prn (send-to Klass :to-string))
+(prn (send-to (send-to Anything :new) :to-string))
+(prn (send-to (send-to Point :new 1 2) :to-string))
+
 
