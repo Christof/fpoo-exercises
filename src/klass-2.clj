@@ -106,9 +106,11 @@
 (prn (send-to (send-to Point :new 1 2) :to-string))
 
 (send-to Klass :new
-         'ColorPoint 'Anything
+         'ColoredPoint 'Point
          {
           :color "black"
+          }
+         {
           })
 
 (def Klass
@@ -120,6 +122,14 @@
 (send-to Point :ancestors) ;(Point Anything)
 (send-to ColoredPoint :ancestors) ;(ColoredPoint Point Anything)
 (send-to Klass :ancestors) ;(Klass Anything)
+
+(def Anything
+  (assoc-in Anything [:__instance_methods__ :class-name]
+            (fn [this]
+              (first (send-to (eval (:__class_symbol__ this)) :ancestors )))))
+
+(send-to Point :class-name) ;Klass
+
 
 
 
