@@ -146,9 +146,12 @@
                  :up 'Klass,
                  {
                   :new
-                  (fn [this module-symbol]
-                    {:__own_symbol__ module-symbol})
-                  })))
+                  (fn [this name methods]
+                    (install (method-holder name,
+                                            :left 'Module,
+                                            :up nil,
+                                            methods
+                                            )))})))
 
 ;; Klass
 (install (method-holder 'Klass,
@@ -241,6 +244,11 @@
 )
 
 
+; Exercise 1
 (def Kuddlesome (send-to Module :new 'Kuddlesome))
 (prn Kuddlesome)
 (send-to Trilobite :include Kuddlesome)
+; Exercise 2
+(def Kuddlesome (send-to Module :new 'Kuddlesome
+                         {:be_stroked (fn [this] "purrrr.....")}
+                         ))
