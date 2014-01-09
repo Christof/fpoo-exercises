@@ -128,11 +128,32 @@
                { 
                })))
 
+;; Module
+(install (method-holder 'Module,
+                        :left 'MetaModule,
+                        :up 'Anything,
+                        {
+                         :include
+                         (fn [this module]
+                           (str "Module  " (:__own_symbol__ module) 
+                                " will someday be included into " ( :__own_symbol__ this)))
+                         }))
+
+(install
+ (invisible
+  (method-holder 'MetaModule,
+                 :left 'Klass,
+                 :up 'Klass,
+                 {
+                  :new
+                  (fn [this module-symbol]
+                    {:__own_symbol__ module-symbol})
+                  })))
 
 ;; Klass
 (install (method-holder 'Klass,
                         :left 'MetaKlass,
-                        :up 'Anything,
+                        :up 'Module,
                         {
                          :new
                          (fn [class & args]
@@ -218,3 +239,8 @@
                  (send-to this :<= upper)))})
 
 )
+
+
+(def Kuddlesome (send-to Module :new 'Kuddlesome))
+(prn Kuddlesome)
+(send-to Trilobite :include Kuddlesome)
