@@ -135,8 +135,16 @@
                         {
                          :include
                          (fn [this module]
-                           (str "Module  " (:__own_symbol__ module) 
-                                " will someday be included into " ( :__own_symbol__ this)))
+                           (let [module-name (:__own_symbol__ module)
+                                 stub-name (gensym module-name)
+                                 stub {
+                                       :__own_symbol__ stub-name
+                                       :__up_symbol__ (:__up_symbol__ this)
+                                       :__left_symbol__ module-name
+                                       }
+                                 ]
+                             (install (assoc this :__up_symbol__ stub-name))
+                             (install stub)))
                          }))
 
 (install
@@ -248,7 +256,16 @@
 (def Kuddlesome (send-to Module :new 'Kuddlesome))
 (prn Kuddlesome)
 (send-to Trilobite :include Kuddlesome)
+;
 ; Exercise 2
 (def Kuddlesome (send-to Module :new 'Kuddlesome
                          {:be_stroked (fn [this] "purrrr.....")}
                          ))
+
+; Exercise 3
+(prn  (:__up_symbol__ Trilobite)) ; Anything
+(send-to Trilobite :include Kuddlesome)
+(def up-trilobite (:__up_symbol__ Trilobite))
+(prn  up-trilobite) ; KuddlesomeXYZ
+(prn (:__up_symbol__ (eval up-trilobite)))
+(prn (:__left_symbol__ (eval up-trilobite)))
