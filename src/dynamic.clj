@@ -435,4 +435,40 @@
                 {})
 
 (def super-braggart (send-to SuperDuperExaggeratingPoint :new 1 2))
+
+; Exercise 5
+;
+(defn repeat-to-super []
+  (send-super current-arguments))
+
+(send-to Klass :new
+         'Upper 'Anything
+         {
+          :super-exists
+          (fn [& args]
+            (str "Got these args: " args))
+          }
+         {})
+
+
+(send-to Klass :new
+         'Lower 'Upper
+         {
+          :super-exists (fn [& args] (repeat-to-super))
+          ;; If you like, you can use this to check whether
+          ;; an attempt to repeat to a nonexistent super-method
+          ;; correctly errors out.
+          :super-missing (fn [& args] (repeat-to-super))
+         }
+         {})
+
+(send-to Klass :new
+         'Lowest 'Upper
+         {}
+         {})
+
+
+(def object (send-to Lowest :new))
+(println (send-to object :super-exists 1 2 3))
+
 (send-to super-braggart :shift 1 2)  ; a point at 123401, 246802
