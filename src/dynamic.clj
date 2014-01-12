@@ -327,3 +327,28 @@
          })
 
 "clueby 0.1 (2012-10-02 patchlevel 0)"
+
+; Exercise 1
+(defn find-containing-holder-symbol [first-candidate message]
+  (first (filter #(message (held-methods %))
+                 (reverse (lineage first-candidate)))))
+
+(find-containing-holder-symbol 'Point :shift)
+(find-containing-holder-symbol 'Point :to-string)
+(find-containing-holder-symbol 'Point :class-name)
+(find-containing-holder-symbol 'Point :nonsense)
+
+(def apply-message-to
+     (fn [method-holder instance message args]
+       (let [target-holder (find-containing-holder-symbol 
+                             (:__own_symbol__ method-holder) message)]
+         (if target-holder
+           (binding [this instance] 
+             (apply (held-methods target-holder) args))
+           (send-to instance :method-missing message args)))))
+
+(def point (send-to Point :new 1 2))
+(prn point)
+(prn (send-to point :class-name))
+(prn (send-to point :x))
+(prn (send-to point :shift 100 200))
