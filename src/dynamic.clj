@@ -344,7 +344,7 @@
                              (:__own_symbol__ method-holder) message)]
          (if target-holder
            (binding [this instance] 
-             (apply (held-methods target-holder) args))
+             (apply (message (held-methods target-holder)) args))
            (send-to instance :method-missing message args)))))
 
 (def point (send-to Point :new 1 2))
@@ -352,3 +352,35 @@
 (prn (send-to point :class-name))
 (prn (send-to point :x))
 (prn (send-to point :shift 100 200))
+
+; Exercise 2
+
+(def ^:dynamic current-message)
+(def ^:dynamic current-arguments)
+(def ^:dynamic holder-of-current-method)
+
+(def apply-message-to
+     (fn [method-holder instance message args]
+       (let [target-holder (find-containing-holder-symbol 
+                             (:__own_symbol__ method-holder) message)]
+         (if target-holder
+           (binding [this instance
+                     current-message message
+                     holder-of-current-method target-holder
+                     current-arguments args
+                     ] 
+             (apply (message (held-methods target-holder)) args))
+           (send-to instance :method-missing message args)))))
+
+(send-to Klass :new
+         'DynamicPoint 'Point
+         {
+          :shift
+          (fn [xinc yinc]
+            (println "Method" current-message "found in" holder-of-current-method)
+            (println "It has these arguments:" current-arguments))
+          }
+         {})
+(def point (send-to DynamicPoint :new 1 2))
+(send-to point :shift 100 200)
+
