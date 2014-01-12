@@ -403,3 +403,36 @@
 (binding [current-message :shift
           holder-of-current-method 'Point]
   (next-higher-holder-or-die))
+
+; Exercise 4
+
+(defn send-super [& args]
+  (binding [holder-of-current-method (next-higher-holder-or-die)
+            current-arguments args]
+    (apply (current-message (held-methods holder-of-current-method)) args)))
+
+(send-to Klass :new
+         'ExaggeratingPoint 'Point
+         {
+          :shift
+          (fn [xinc yinc]
+            (send-super (* 100 xinc) (* 100 yinc)))
+         }
+         {})
+          
+(def braggart (send-to ExaggeratingPoint :new 1 2))
+(prn (send-to braggart :shift 1 2))  ;; A point at 101, 202
+
+
+
+(send-to Klass :new
+                'SuperDuperExaggeratingPoint 'ExaggeratingPoint
+                {
+                 :shift
+                 (fn [xinc yinc]
+                   (send-super (* 1234 xinc) (* 1234 yinc)))
+                 }
+                {})
+
+(def super-braggart (send-to SuperDuperExaggeratingPoint :new 1 2))
+(send-to super-braggart :shift 1 2)  ; a point at 123401, 246802
