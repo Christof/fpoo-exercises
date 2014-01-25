@@ -418,4 +418,50 @@
 (def snooper (send-to Snooper :new))
 (prn (send-to snooper :snoop "an arg")) ;  => [:snoop 'Snooper ("an arg") snooper])
 
+; Exercise 3:
+
+(def repeat-to-super
+     (fn []
+       (activate-method (send-to *active-message* :move-up))))
+       
+(def send-super
+     (fn [& args]
+       (activate-method (assoc (send-to *active-message* :move-up)
+                          :args args))))
+
+  ;; Since you're replacing `using-method-above`, it's useful to
+  ;; define it to something that will blow up if there's still a
+  ;; stray call to it.
+
+(def using-message-above :ensure-that-the-function-can-no-longer-be-called)
+
+
+(send-to Klass :new
+         'ActiveMessage 'Anything
+         {
+          :add-instance-values
+          (fn [& key-value-pairs]
+            (merge this (apply hash-map key-value-pairs))
+            )
+          :name (fn [] (:name this))
+          :holder-name (fn [] (:holder-name this))
+          :args (fn [] (:args this))
+          :target (fn [] (:target this))
+
+          :move-up
+          (fn []
+            (let [symbol-above (method-holder-symbol-above (:holder-name this))
+                  holder-name (find-containing-holder-symbol symbol-above
+                                                             (:name this))]
+              (if holder-name
+                (assoc this :holder-name holder-name)
+                (throw (Error. (str "No superclass method `" (:name this)
+                                    "` above `" (:holder-name this)
+                                    "`."))))))
+          }
+         {
+          }
+         )
+
+ 
 
