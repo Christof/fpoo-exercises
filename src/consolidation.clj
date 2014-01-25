@@ -373,3 +373,49 @@
          {
           }
          )
+
+; Exercise 2
+(defn send-to-Message-new  ;; Supposed to remind you of (send-to Message :new ...)
+  [target name args holder-name]
+  (let [initializer (get (held-methods 'ActiveMessage) :add-instance-values)]
+    (binding [this (basic-object 'ActiveMessage)]
+      (initializer :name name
+                   :holder-name holder-name
+                   :args args
+                   :target target))))
+
+(def fresh-active-message
+     (fn [target name args]
+       "Construct the message corresponding to the
+      attempt to send the particular `name` to the
+      `target` with the given `args`. If there is no
+      matching method, the message becomes one that
+      sends `:method-missing` to the target."
+       (let [holder-name (find-containing-holder-symbol (:__left_symbol__ target)
+                                                        name)]
+             (if holder-name
+               (send-to-Message-new target name args holder-name)
+               (fresh-active-message target
+                                     :method-missing
+                                     (vector name args))))))
+
+(def point (send-to Point :new 1 2))
+
+(send-to Klass :new
+         'Snooper 'Anything
+         {
+          :snoop
+          (fn [& args]
+            [
+             (send-to *active-message* :name)
+             (send-to *active-message* :holder-name)
+             (send-to *active-message* :args)
+             (send-to *active-message* :target)
+            ])
+          }
+         {})
+
+(def snooper (send-to Snooper :new))
+(prn (send-to snooper :snoop "an arg")) ;  => [:snoop 'Snooper ("an arg") snooper])
+
+
