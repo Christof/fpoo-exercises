@@ -15,6 +15,17 @@
             b (+ 1 a)] ; would blow up
      b))
 
+(defn error-decider [value continuation]
+  (if (oopsie? value)
+    value
+    (continuation value)
+    )
+  )
+
+(def error-monad
+  (monad [m-result identity
+          m-bind error-decider]))
+
 ;; Error utilities
 
 (def oops!
@@ -38,9 +49,10 @@
 
 (def result
   (with-monad error-monad
-    (domand [big-number (factorial -1)
+    (domonad [big-number (factorial -1)
              even-bigger (* 2 big-number)]
     (repeat :a even-bigger))))
-(oopsie? result)
-(:reason result)
-(:number result)
+
+(println (oopsie? result))
+(println (:reason result))
+(println (:number result))
