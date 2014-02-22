@@ -74,5 +74,37 @@
                              (-> zipper zip/next helper)))]
        (-> form zip/seq-zip helper zip/root))))
 
+; Exercise 1
+(defn all-vectors [tree]
+  (letfn [(all-from-zipper [so-far zipper]
+            (cond (zip/end? zipper)
+                  so-far
 
+                  (zip/branch? zipper)
+                  (all-from-zipper so-far (zip/next zipper))
 
+                  (vector? (zip/node zipper))
+                  (all-from-zipper (cons (zip/node zipper) so-far)
+                                   (zip/next zipper))
+
+                  :else
+                  (all-from-zipper so-far (zip/next zipper))))]
+    (reverse (all-from-zipper '() (zip/seq-zip tree)))))
+
+(all-vectors '(fn [a b] (concat [a] [b])))
+
+; Exercise 2
+(defn first-vector [tree]
+  (letfn [(all-from-zipper [zipper]
+            (cond (zip/end? zipper)
+                  nil
+
+                  (vector? (zip/node zipper))
+                    (zip/node zipper)
+
+                  :else
+                  (all-from-zipper (zip/next zipper))))]
+    (all-from-zipper (zip/seq-zip tree))))
+
+(prn (first-vector '(fn [a b] (concat [a] [b]))))
+(prn (first-vector '(+ 1 (* 3 4))))
