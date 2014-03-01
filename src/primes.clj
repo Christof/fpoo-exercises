@@ -1,3 +1,4 @@
+(ns primes)
 ; Exercise 1
 (range (* 2 2) 101 2)
 (defn multiples [number]
