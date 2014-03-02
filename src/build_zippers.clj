@@ -115,8 +115,27 @@
 
 ; Exercise 5
 (defn zreplace [zip subtree]
-  (assoc zipper
+  (assoc zip
          :here subtree
          :changed true))
 
+(defn zup [zip]
+  (let [unmodified (first (:parents zip))]
+    (cond
+      (nil? unmodified)
+      nil
 
+      (:changed zip)
+      (assoc unmodified
+             :here (concat (:lefts zip) (list (:here zip)) (:rights zip))
+             :changed true)
+      :else
+      unmodified)))
+
+(-> (seq-zip '(a b c)) zdown zright (zreplace 3) zup znode) ; (a 3 c)
+(-> (seq-zip '(a b c)) zdown zright (zreplace 3)
+    zright (zreplace 4) zup znode) ; (a 3 4)
+(-> (seq-zip '(a)) zdown (zreplace 3) zup zup) ; nil
+(-> (seq-zip '(a (b) c)) zdown zright zdown (zreplace 3) zroot) ; (a (3) c)
+(-> (seq-zip '(a (b) c)) zdown zright zdown (zreplace 3) 
+    zup zright (zreplace 4) zroot) ; (a (3) 4)
