@@ -104,4 +104,19 @@
 (-> (seq-zip '(a b c)) zdown zright zright zright) ; nil
 (-> (seq-zip '(a b c)) zdown zup znode) ; (a b c)
 
+; Exercise 4
+(defn zreplace [zip subtree]
+  (assoc zip
+         :here subtree))
+
+(-> (seq-zip '(a b c)) zdown zright (zreplace 3) znode) ; 3
+(-> (seq-zip '(a b c)) zdown zright (zreplace 3) zright zleft znode) ; 3
+(-> (seq-zip '(a b c)) zdown zright (zreplace 3) zleft zright zright znode) ; c
+
+; Exercise 5
+(defn zreplace [zip subtree]
+  (assoc zipper
+         :here subtree
+         :changed true))
+
 
