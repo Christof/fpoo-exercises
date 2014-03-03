@@ -139,3 +139,57 @@
 (-> (seq-zip '(a (b) c)) zdown zright zdown (zreplace 3) zroot) ; (a (3) c)
 (-> (seq-zip '(a (b) c)) zdown zright zdown (zreplace 3) 
     zup zright (zreplace 4) zroot) ; (a (3) 4)
+
+; Exercise 6
+; Step 1
+(defn znext [zip]
+  (zright zip)
+  )
+(-> (seq-zip '( a b)) zdown znext znode) ; b
+(-> (seq-zip '(a ((b)))) zdown znext znode) ; ((b))
+
+; Step 2
+(def zbranch? (comp seq? znode))
+(defn znext [zip]
+  (cond (and (zbranch? zip) (not (nil? (zdown zip))))
+        (zdown zip)
+        :else
+        (zright zip)
+        ))
+(-> (seq-zip '(a b)) znext znode) ; a
+(-> (seq-zip '(() b)) znext znext znode) ; b
+(defn znext [zip]
+  (or (and (zbranch? zip) (zdown zip))
+      (zright zip)))
+
+; Step 3
+(defn znext [zip]
+  (letfn [(search-up [zip]
+            (or (-> zip zup zright)
+                (-> zip zup search-up)))]
+  (or (and (zbranch? zip) (zdown zip))
+      (zright zip)
+      (search-up zip)
+      )))
+
+(-> (seq-zip '((a) b)) zdown zdown znext znode) ; b
+(-> (seq-zip '(((a)) b)) zdown zdown zdown znext znode) ; b
+
+; Step 4
+(def zend? :end?)
+(defn znext [zip]
+  (letfn [(search-up [zip]
+            (if (nil? (zup zip))
+              (assoc zip
+                     :end? true)
+            (or (-> zip zup zright)
+                (-> zip zup search-up))))]
+  (or (and (zbranch? zip) (zdown zip))
+      (zright zip)
+      (search-up zip)
+      )))
+(-> (seq-zip '()) zend?) ; false (returns actually nil)
+(-> (seq-zip '()) znext zend?) ; true
+(def zipper (-> (seq-zip '(a)) znext (zreplace 5) znext))
+(zend? zipper) ; true
+(zroot zipper) ; (5)
