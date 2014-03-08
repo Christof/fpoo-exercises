@@ -54,3 +54,19 @@
                                       (range 10000))))
          (catch Error e
            true))))
+(eager? filter)
+(eager? filterr)
+(eager? mapr)
+
+
+(defn filtere [pred s]
+         (cond (empty? s)
+               nil
+
+               (pred (first s))
+               (cons (first s) (filtere pred (rest s)))
+
+               :else
+               (filtere pred (rest s))))
+(filtere odd? [-1 2 -3 5])
+(eager? filtere)
