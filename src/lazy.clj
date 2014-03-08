@@ -18,6 +18,22 @@
 
 (mapr inc [1 2 3 4])
 
+; Exercise 2
+(defn filterr [pred s]
+  (new clojure.lang.LazySeq
+       (fn []
+         (cond (empty? s)
+               nil
+
+               (pred (first s))
+               (cons (first s) (filterr pred (rest s)))
+
+               :else
+               (filterr pred (rest s))))))
+
+(filterr odd? [-1 2 -3 5])
+(filter odd? [-1 2 -3 5])
+
 ;;; For exercise 3.
 
 ;;; This throws an exception if the last element of a sequence is
