@@ -12,3 +12,12 @@
   [so-far [head & tail] ] (count-sequence (inc so-far) tail))
 
 (count-sequence '(:a :b :c))
+
+; Exercise 2
+(defpatterned pattern-reduce
+  [fun so-far []] so-far
+  [fun so-far [head & tail]] (pattern-reduce fun (fun so-far head) tail))
+
+(pattern-reduce (fn [so-far elt] (cons elt so-far))
+                []
+                [:a :b :c])
