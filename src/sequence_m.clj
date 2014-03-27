@@ -2,26 +2,29 @@
 
 (use 'clojure.algo.monads)
 
-(def sequence-monad-decider
-     (fn [step-value monadic-continuation]
-       (mapcat monadic-continuation step-value)))
+(def maybe-sequence-monad-monadifier list)
 
-(def sequence-monad-monadifier list)
+(def maybe-sequence-monad-decider
+  (fn [step-value monadic-continuation]
+    (let [continuation (fn [binding-value]
+                         (if (nil? binding-value)
+                           (maybe-sequence-monad-monadifier binding-value)
+                           (monadic-continuation binding-value)))]
+      (mapcat continuation step-value))))
 
-(def sequence-monad
-     (monad [m-result sequence-monad-monadifier
-             m-bind sequence-monad-decider]))
+
+(def maybe-sequence-monad
+     (monad [m-result maybe-sequence-monad-monadifier
+             m-bind maybe-sequence-monad-decider]))
 
 (prn
- (with-monad sequence-monad
-   (domonad [a [1 2]
-             b [10, 100]
-             c [-1 1]]
-            (* a b c))))
+ (with-monad maybe-sequence-monad
+   (domonad [a [1 2 3]
+             b [-1, 1]]
+            (* a b)))) ; (-1 1 -2 2 -3 3)
 
 (prn 
- (with-monad sequence-monad
-   (domonad [a (list 1 2 3)
-             b (list (- a) a)
-             c (list (+ a b) (- a b))]
-            (* a b c))))
+ (with-monad maybe-sequence-monad
+   (domonad [a [1 nil 3]
+             b [-1 1]]
+            (* a b)))) ; (-1 1 nil -3 3)
