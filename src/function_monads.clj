@@ -114,7 +114,22 @@
 
 (prn (transform-state-example 1))
 
-;;; State monad
+; Exercise 5
+
+
+(defn get-state [variable]
+       (fn [state]
+         {:state state, :result (variable state)}))
+
+(defn assign-state [variable new-state]
+  (fn [state]
+    (let [old-value (variable state)]
+    {:state (assoc state variable new-state) , :result old-value})))
+
+(defn transform-state [variable transformer]
+  (fn [state]
+    (let [old-value (variable state)]
+    {:state (assoc state variable (transformer old-value)) , :result old-value})))
 
 (def state-monad
      (monad [m-result 
@@ -130,29 +145,10 @@
                        new-state (:state enclosed-map)]
                    (  (monadic-continuation binding-value) new-state))))]))
 
-(def get-state
-     (fn []
-       (fn [state]
-         {:state state, :result state})))
-
-
-(def assign-state
-     (fn [new-state]
-       (fn [state]
-         {:state new-state, :result state})))
-
-
-(def calculation-with-initial-state
+(def map-state-example
      (with-monad state-monad
-       (domonad [original-state (assign-state 88)
-                 state (get-state)]
-            (str "original state " original-state " was set to " state))))
-
- (def mixer
-      (with-monad state-monad
-        (let [frozen-step m-result]
-          (domonad [original (get-state)
-                    a (frozen-step (+ original 88))
-                    b (frozen-step (* a 2))
-                    _ (assign-state b)]
-                   [original a b]))))
+       (domonad [a (get-state :a)
+                 old-b (assign-state :b 3)
+                 old-c (transform-state :c inc)]
+          [a old-b old-c])))
+(prn (map-state-example {:a 1 :b 2 :c 5}))
