@@ -79,6 +79,28 @@
 (println "-----------")
 (println "Running run-and-charge.")
 
+; Exercise 3
+(def verbose-charging-monad-alternate-inc
+     (monad [m-result 
+             (fn [result]
+               (cl-format true "Freezing ~A.~%" result)
+               (fn [charge]
+                 (cl-format true "Unfrozen calculation gets charge ~A.~%" charge)
+                 (cl-format true "... The frozen calculation result was ~A.~%" result)
+                 {:charge (inc charge), :result result}))       ;; <<== change
+
+             m-bind
+             (fn [monadic-value continuation]
+               (cl-format true "Making a decision.~%")
+               (fn [charge]
+                 (let [enclosed-map (monadic-value charge)
+                       binding-value (:result enclosed-map)]
+                   (cl-format true "Calling continuation with ~A~%" binding-value)
+                   (cl-format true "... The charge to increment is ~A~%", charge)
+                   ( (continuation binding-value) charge))))]))                        ;; <<== change
+
+(println "==========")
+(println "Defining run-and-charge.")
 
 
 ;;; State monad
