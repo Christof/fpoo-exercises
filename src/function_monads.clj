@@ -103,6 +103,17 @@
 (println "Defining run-and-charge.")
 
 
+; Exercise 4
+(defn transform-state [transformer]
+  (fn [state]
+    {:state (transformer state) :result state}))
+
+(def transform-state-example
+  (domonad [b (transform-state inc)]
+           b))
+
+(prn (transform-state-example 1))
+
 ;;; State monad
 
 (def state-monad
